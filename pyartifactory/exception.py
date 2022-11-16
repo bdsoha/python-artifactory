@@ -2,9 +2,35 @@
 Definition of all exceptions.
 """
 
+import logging
+from typing import Never, Tuple, Union
+
+import requests
+
+
+logger = logging.getLogger("pyartifactory")
+
 
 class ArtifactoryException(Exception):
     """Generic artifactory exception."""
+
+    @classmethod
+    def raise_from(
+        cls,
+        error: requests.exceptions.HTTPError,
+        expected_code: Union[int, Tuple[int, ...]],
+        message: str,
+        *args
+    ) -> Never:
+        """
+        Coerce an HTTP response to a custom exception type
+        """
+        if type(expected_code) is int:
+            expected_code = (expected_code,)
+        if error.response.status_code in expected_code:
+            logger.error(message, *args)
+            raise cls(message % tuple(args))
+        raise ArtifactoryException from error
 
 
 class UserAlreadyExistsException(ArtifactoryException):
