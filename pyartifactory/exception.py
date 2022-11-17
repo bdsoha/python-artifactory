@@ -3,7 +3,7 @@ Definition of all exceptions.
 """
 
 import logging
-from typing import Never, Tuple, Union
+from typing import NoReturn, Tuple, Union
 
 import requests
 
@@ -21,7 +21,7 @@ class ArtifactoryException(Exception):
         expected_code: Union[int, Tuple[int, ...]],
         message: str,
         *args
-    ) -> Never:
+    ) -> NoReturn:
         """
         Coerce an HTTP response to a custom exception type
         """
